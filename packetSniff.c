@@ -54,28 +54,32 @@ void processPacket(u_char* arg, const struct pcap_pkthdr* pkthdr, const u_char* 
  u_char *ptr;               // used for pointing to the MAC addresses while printing
  int w, f = 0;              // iterators used in traversing the array of structs
 
- 
-
-    // typecasting the packet to extract the header information
-     eptr = (struct ether_header *) packet;
+ // typecasting the packet to extract the header information
+ eptr = (struct ether_header *) packet;
 
      // a loop for checking the already existing src/dest pair information
-     if (count2 != 0) {
+     if (count2 != 0) 
+     {
 
         // looking at all elements of list
-        for (w = 0; w < count2; w++) {
+        for (w = 0; w < count2; w++) 
+        {
 
             // if both the src and dest address match then the packet count and header length is added
-            if (strcmp(eptr->ether_dhost, list[w].dest) == 0) {
-                if (strcmp(eptr->ether_shost, list[w].src) == 0) {
+            if (strcmp(eptr->ether_dhost, list[w].dest) == 0) 
+            {
+                if (strcmp(eptr->ether_shost, list[w].src) == 0) 
+                {
                      list[w].dpacksize += pkthdr->len;
                      list[w].dpack += 1;
                      goto next;
                 }
             }
             // in case the dest sends packets to the src in our pair, then increment packet count for src packets 
-            if (strcmp(eptr->ether_dhost, list[w].src) == 0) {
-                if (strcmp(eptr->ether_shost, list[w].dest) == 0) {
+            if (strcmp(eptr->ether_dhost, list[w].src) == 0) 
+            {
+                if (strcmp(eptr->ether_shost, list[w].dest) == 0) 
+                {
                      list[w].dpacksize += pkthdr->len;
                      list[w].spack += 1;
                      goto next;
@@ -102,7 +106,8 @@ void processPacket(u_char* arg, const struct pcap_pkthdr* pkthdr, const u_char* 
 
 
     // the case when the program starts and the first packet is analyzed and its information is added to list
-    if (count2 == 0) {
+    if (count2 == 0) 
+    {
         u_int8_t* sourceHex;
         u_int8_t* destHex;  
         sourceHex = eptr->ether_shost; 
@@ -127,24 +132,29 @@ void processPacket(u_char* arg, const struct pcap_pkthdr* pkthdr, const u_char* 
     qsort (list, count2, sizeof(struct store), compare2);
 
     // a for-loop which runs for N-times to display the top-N talkers
-    for (f = 0; f < N; f++) {
+    for (f = 0; f < N; f++) 
+    {
 
         ptr = list[f].src;
         i = ETHER_ADDR_LEN;
 
         printf("src            dst | ");
 
-        do{
+        do
+        {
             printf("%s%x",(i == ETHER_ADDR_LEN) ? " " : ":",*ptr++);
-        }while(--i>0);
+        }
+        while(--i>0);
         printf(" | ");
 
         ptr = list[f].dest;
         i = ETHER_ADDR_LEN;
 
-        do{
+        do
+        {
             printf("%s%x",(i == ETHER_ADDR_LEN) ? " " : ":",*ptr++);
-        }while(--i>0);
+        }
+        while(--i>0);
 
         printf("  |\n");
         printf("------------------+----------------------+--------------------+\n");
@@ -152,17 +162,22 @@ void processPacket(u_char* arg, const struct pcap_pkthdr* pkthdr, const u_char* 
          ptr = list[f].src;
         i = ETHER_ADDR_LEN;
 
-        do{
+        do
+        {
             printf("%s%x",(i == ETHER_ADDR_LEN) ? " " : ":",*ptr++);
-        }while(--i>0);
+        }
+        while(--i>0);
 
         printf(" | ");
         printf("    0 p,  0 B      ");
 
         // here conversion to kilobytes in case we cross 1000 bytes
-        if (list[f].dpacksize <= 1000) {
+        if (list[f].dpacksize <= 1000) 
+        {
             printf(" |      %d p, %d B     |\n", list[f].dpack, list[f].dpacksize);
-        }else{
+        }
+        else
+        {
             int p = list[f].dpacksize/1000;
             printf(" |      %d p, %d kB    |\n", list[f].dpack, p);
         }
@@ -170,24 +185,27 @@ void processPacket(u_char* arg, const struct pcap_pkthdr* pkthdr, const u_char* 
         ptr = list[f].dest;
         i = ETHER_ADDR_LEN;
 
-        do{
+        do
+        {
             printf("%s%x",(i == ETHER_ADDR_LEN) ? " " : ":",*ptr++);
-        }while(--i>0);
+        }
+        while(--i>0);
 
 
         // here conversion to kilobytes in case we cross 1000 bytes
-        if (list[f].dpacksize <= 1000) {
-        printf(" |       %d p, %d B     |", list[f].spack, list[f].dpacksize);
-        }else{
-        int q = list[f].dpacksize/1000;
-        printf(" |      %d p, %d kB     |", list[f].spack, q);
+        if (list[f].dpacksize <= 1000) 
+        {
+            printf(" |       %d p, %d B     |", list[f].spack, list[f].dpacksize);
         }
-
+        else
+        {
+            int q = list[f].dpacksize/1000;
+            printf(" |      %d p, %d kB     |", list[f].spack, q);
+        }
         printf("    0 p,  0 B      |\n\n\n");
-
     }
     printf("*************************************************************************\n\n");
-    // the feed is displayed after an interval as set in the main function or just by default.
+    // the feed is displayed after an interval is set in the main function or just by default.
     sleep(interval);
 }
 
@@ -217,7 +235,6 @@ void parsing(int argc, char** argv)
                 exit(1);
         }
     }
-
 }
 
 // the main function
@@ -245,8 +262,5 @@ int main(int argc, char** argv)
         fprintf(stderr, "failed to process packets: %s\n", pcap_geterr(descr));
         exit(5);
     }
-
-
-
     return 0;
 }
